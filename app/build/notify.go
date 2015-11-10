@@ -145,12 +145,13 @@ func notify(c appengine.Context, com *Commit, builder, logHash string) {
 // postGerritMessage posts a message to the code review thread for the given
 // Commit.
 func postGerritMessage(c appengine.Context, com *Commit, message string) error {
+	gerritUrl := "https://go-review.googlesource.com"
 	if appengine.IsDevAppServer() {
 		c.Infof("Skiping update of Gerrit review for %v with message: %v", com, message)
 		return nil
 	}
 	// Get change ID using commit hash.
-	resp, err := urlfetch.Client(c).Get("https://go-review.googlesource.com/r/" + com.Hash)
+	resp, err := urlfetch.Client(c).Get(gerritUrl + "/r/" + com.Hash)
 	if err != nil {
 		return fmt.Errorf("lookup %v: contacting Gerrit %v", com.Hash, err)
 	}
@@ -172,7 +173,7 @@ func postGerritMessage(c appengine.Context, com *Commit, message string) error {
 	if err != nil {
 		return fmt.Errorf("marshalling message: %v", err)
 	}
-	req, err := http.NewRequest("POST", "https://go-review.googlesource.com/a/changes/"+id+"/revisions/current/review", bytes.NewReader(data))
+	req, err := http.NewRequest("POST", gerritUrl + "/a/changes/"+id+"/revisions/current/review", bytes.NewReader(data))
 	if err != nil {
 		return fmt.Errorf("preparing message: %v", err)
 	}
