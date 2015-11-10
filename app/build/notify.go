@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	domain     = "build.golang.org"
+	domain     = "build.ipfs.io"
 )
 
 // ignoreFailure is a set of builders that we don't email about because
