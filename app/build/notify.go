@@ -25,10 +25,7 @@ import (
 )
 
 const (
-	mailFrom   = "builder@golang.org" // use this for sending any mail
-	failMailTo = "golang-dev@googlegroups.com"
 	domain     = "build.golang.org"
-	gobotBase  = "http://research.swtch.com/gobot_codereview"
 )
 
 // ignoreFailure is a set of builders that we don't email about because
