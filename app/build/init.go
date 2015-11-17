@@ -17,6 +17,36 @@ import (
 	"key"
 )
 
+func dashDebugHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "text/plain; charset=utf-8")
+	d := dashboardForRequest(r)
+	c := d.Context(appengine.NewContext(r))
+	defer cache.Tick(c)
+
+	fmt.Fprintf(w, "Dashboard's name: '%v'\n", d.Name)
+	fmt.Fprintf(w, "Dashboard's namespace (empty means default): '%v'\n", d.Namespace)
+	fmt.Fprintf(w, "Path prefix (no trailing /): '%v'\n", d.Prefix)
+	fmt.Fprintf(w, "Package count: '%v'\n", len(d.Packages))
+
+	for i, p := range d.Packages {
+		err := datastore.Get(c, p.Key(c), new(Package))
+		if _, ok := err.(*datastore.ErrFieldMismatch); ok {
+			// Some fields have been removed, so it's okay to ignore this error.
+			err = nil
+		}
+		if err == nil {
+			fmt.Fprintf(w, "Package %v: '%v'\n", i, p.Name)
+			fmt.Fprintf(w, "\tKind: %v\n", p.Kind)
+			fmt.Fprintf(w, "\tPath: %v\n", p.Path)
+			fmt.Fprintf(w, "\tNextNum: %v\n", p.NextNum)
+			continue
+		} else if err != datastore.ErrNoSuchEntity {
+			logErr(w, r, err)
+			return
+		}
+	}
+}
+
 func initHandler(w http.ResponseWriter, r *http.Request) {
 	d := dashboardForRequest(r)
 	c := d.Context(appengine.NewContext(r))

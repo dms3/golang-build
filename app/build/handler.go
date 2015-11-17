@@ -982,6 +982,9 @@ func init() {
 	handleFunc("/init", initHandler)
 	handleFunc("/key", keyHandler)
 
+	// debug handler
+	handleFunc("/dash-debug", dashDebugHandler)
+
 	// authenticated handlers
 	handleFunc("/building", AuthHandler(buildingHandler))
 	handleFunc("/clear-results", AuthHandler(clearResultsHandler))
