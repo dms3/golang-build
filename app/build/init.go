@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"encoding/json"
+
 	"appengine"
 	"appengine/datastore"
 
@@ -45,6 +47,21 @@ func dashDebugHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func dashDebugJsonHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "text/json; charset=utf-8")
+	d := dashboardForRequest(r)
+	c := d.Context(appengine.NewContext(r))
+	defer cache.Tick(c)
+
+	b, err := json.Marshal(d)
+	if err != nil {
+		logErr(w, r, err)
+		return
+	}
+
+	w.Write(b)
 }
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
