@@ -9,11 +9,12 @@ package build
 import (
 	"fmt"
 	"net/http"
-
+	"html/template"
 	"encoding/json"
 
 	"appengine"
 	"appengine/datastore"
+	"appengine/blobstore"
 
 	"cache"
 	"key"
@@ -63,6 +64,47 @@ func dashDebugJsonHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Write(b)
 }
+
+func configFileHandler(w http.ResponseWriter, r *http.Request) {
+	const rootTemplateHTML = `
+<html><body>
+<form action="{{.}}" method="POST" enctype="multipart/form-data">
+Upload Config File: <input type="file" name="file"><br>
+<input type="submit" name="submit" value="Submit">
+</form></body></html>
+`
+
+	var rootTemplate = template.Must(template.New("root").Parse(rootTemplateHTML))
+
+	c := appengine.NewContext(r)
+	uploadURL, err := blobstore.UploadURL(c, "/upload", nil)
+	if err != nil {
+		logErr(w, r, err)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	err = rootTemplate.Execute(w, uploadURL)
+	if err != nil {
+		c.Errorf("%v", err)
+	}
+}
+
+func configFileUploadHandler(w http.ResponseWriter, r *http.Request) {
+        c := appengine.NewContext(r)
+        blobs, _, err := blobstore.ParseUpload(r)
+        if err != nil {
+		logErr(w, r, err)
+                return
+        }
+        file := blobs["file"]
+        if len(file) == 0 {
+                c.Errorf("no file uploaded")
+                http.Redirect(w, r, "/", http.StatusFound)
+                return
+        }
+        http.Redirect(w, r, "/config-file", http.StatusFound)
+}
+
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
 	d := dashboardForRequest(r)

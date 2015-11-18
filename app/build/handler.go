@@ -981,6 +981,8 @@ func init() {
 	// admin handlers
 	handleFunc("/init", initHandler)
 	handleFunc("/key", keyHandler)
+	handleFunc("/config-file", configFileHandler)
+	handleFunc("/upload", configFileUploadHandler)
 
 	// debug handler
 	handleFunc("/dash-debug", dashDebugJsonHandler)
