@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"html/template"
 	"encoding/json"
+	"io/ioutil"
 
 	"appengine"
 	"appengine/datastore"
@@ -94,9 +95,25 @@ func configFileUploadHandler(w http.ResponseWriter, r *http.Request) {
                 http.Redirect(w, r, "/", http.StatusFound)
                 return
         }
-        http.Redirect(w, r, "/config-file", http.StatusFound)
+        readConfigFileFromBlob(w, r, c, file[0])
 }
 
+func readConfigFileFromBlob(w http.ResponseWriter, r *http.Request, c appengine.Context, info *blobstore.BlobInfo) {
+	blobReader := blobstore.NewReader(c, info.BlobKey)
+	b, err := ioutil.ReadAll(blobReader);
+	if err != nil {
+                c.Errorf("error reading uploaded file: %v", err)
+                http.Redirect(w, r, "/", http.StatusFound)
+                return
+	}
+	var dash Dashboard
+	if err := json.Unmarshal(b, &dash); err != nil {
+                c.Errorf("error parsing json from uploaded file: %v", err)
+                http.Redirect(w, r, "/", http.StatusFound)
+                return
+	}
+	printDashboards(w, r, c, &dash)
+}
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
 	d := dashboardForRequest(r)
