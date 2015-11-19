@@ -25,7 +25,10 @@ func dashDebugHandler(w http.ResponseWriter, r *http.Request) {
 	d := dashboardForRequest(r)
 	c := d.Context(appengine.NewContext(r))
 	defer cache.Tick(c)
+	printDashboards(w, r, c, d)
+}
 
+func printDashboards(w http.ResponseWriter, r *http.Request, c appengine.Context, d *Dashboard) {
 	fmt.Fprintf(w, "Dashboard's name: '%v'\n", d.Name)
 	fmt.Fprintf(w, "Dashboard's namespace (empty means default): '%v'\n", d.Namespace)
 	fmt.Fprintf(w, "Path prefix (no trailing /): '%v'\n", d.Prefix)
