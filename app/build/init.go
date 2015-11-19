@@ -35,21 +35,10 @@ func printDashboards(w http.ResponseWriter, r *http.Request, c appengine.Context
 	fmt.Fprintf(w, "Package count: '%v'\n", len(d.Packages))
 
 	for i, p := range d.Packages {
-		err := datastore.Get(c, p.Key(c), new(Package))
-		if _, ok := err.(*datastore.ErrFieldMismatch); ok {
-			// Some fields have been removed, so it's okay to ignore this error.
-			err = nil
-		}
-		if err == nil {
-			fmt.Fprintf(w, "Package %v: '%v'\n", i, p.Name)
-			fmt.Fprintf(w, "\tKind: %v\n", p.Kind)
-			fmt.Fprintf(w, "\tPath: %v\n", p.Path)
-			fmt.Fprintf(w, "\tNextNum: %v\n", p.NextNum)
-			continue
-		} else if err != datastore.ErrNoSuchEntity {
-			logErr(w, r, err)
-			return
-		}
+		fmt.Fprintf(w, "\nPackage %v: '%v'\n", i, p.Name)
+		fmt.Fprintf(w, "\tKind: %v\n", p.Kind)
+		fmt.Fprintf(w, "\tPath: %v\n", p.Path)
+		fmt.Fprintf(w, "\tNextNum: %v\n", p.NextNum)
 	}
 }
 
