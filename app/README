@@ -1,0 +1,27 @@
+How to get started developing the app
+=====================================
+
+1) Get a running app locally
+----------------------------
+
+- Install Go
+
+- Install Google App Engine SDK for Go
+
+- go get golang.org/x/build
+
+- cd golang.org/x/build/app && goapp serve
+
+
+2) Checking how it works
+------------------------
+
+- curl 'http://localhost:8080/init' to create dashboard and packages
+
+- curl 'http://localhost:8080/packages?kind=subrepo' to see that
+  things are initialized
+
+- in a browser: http://localhost:8080/?repo=golang.org%2Fx%2Farch# to
+  see the arch subrepo
+
+- curl 'http://localhost:8080/buildtest' to launch tests
