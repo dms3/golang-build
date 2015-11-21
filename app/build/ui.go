@@ -82,14 +82,24 @@ func uiHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+
+		c.Infof("uiHandler: pkg: %v", pkg)
+
 		commits, err := dashCommits(c, pkg, page, branch)
 		if err != nil {
 			logErr(w, r, err)
 			return
 		}
+
+		c.Infof("uiHandler: commits: %v", commits)
+
 		builders := commitBuilders(commits)
 
+		c.Infof("uiHandler: builders: %v", builders)
+
 		branches := listBranches(c)
+
+		c.Infof("uiHandler: branches: %v", branches)
 
 		var tagState []*TagState
 		// Only show sub-repo state on first page of normal repo view.
@@ -272,9 +282,13 @@ func dashCommits(c appengine.Context, pkg *Package, page int, branch string) ([]
 		Ancestor(pkg.Key(c)).
 		Order("-Num")
 
+	c.Infof("dashCommits: q: %v", q)
+
 	if branch != "" {
 		q = q.Filter("Branch =", branch)
 	}
+
+	c.Infof("dashCommits: q: %v", q)
 
 	var commits []*Commit
 	_, err := q.Limit(commitsPerPage).Offset(offset).
