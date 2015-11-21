@@ -934,7 +934,7 @@ func GetTag(c appengine.Context, kind, name string) (*Tag, error) {
 // Kind must be one of "external" or "subrepo".
 func Packages(c appengine.Context, kind string) ([]*Package, error) {
 	switch kind {
-	case "external", "subrepo":
+	case "external", "subrepo", "", "go":
 	default:
 		return nil, errors.New(`kind must be one of "external" or "subrepo"`)
 	}
