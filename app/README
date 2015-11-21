@@ -25,3 +25,6 @@ How to get started developing the app
   see the arch subrepo
 
 - curl 'http://localhost:8080/buildtest' to launch tests
+
+- curl 'http://localhost:8080/commit?path=golang.org%2Fx%2Ftest&hash=0003'
+  to get information about a test commit
