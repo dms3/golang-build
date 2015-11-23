@@ -979,6 +979,7 @@ func init() {
 	// admin handlers
 	handleFunc("/init", initHandler)
 	handleFunc("/key", keyHandler)
+	handleFunc("/dashboard-config", dashboardConfigHandler)
 
 	// authenticated handlers
 	handleFunc("/building", AuthHandler(buildingHandler))

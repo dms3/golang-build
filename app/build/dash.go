@@ -9,13 +9,34 @@ package build
 import (
 	"net/http"
 	"strings"
+	"html/template"
 
 	"appengine"
+	"appengine/blobstore"
 )
 
 // dashboardsHandler returns a list of the dashboards.
 func dashboardsHandler(r *http.Request) (interface{}, error) {
 	return dashboards, nil
+}
+
+var dashTemplate = template.Must(
+	template.New("dash.html").ParseFiles("build/dash.html"),
+)
+
+// dashboardConfigHandler draws the dashboard config page.
+func dashboardConfigHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	uploadURL, err := blobstore.UploadURL(c, "/upload", nil)
+	if err != nil {
+		logErr(w, r, err)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	if err := dashTemplate.Execute(w, uploadURL); err != nil {
+		logErr(w, r, err)
+		return
+	}
 }
 
 func handleFunc(path string, h http.HandlerFunc) {
