@@ -984,6 +984,7 @@ func init() {
 	handleFunc("/building", AuthHandler(buildingHandler))
 	handleFunc("/clear-results", AuthHandler(clearResultsHandler))
 	handleFunc("/commit", AuthHandler(commitHandler))
+	handleFunc("/dashboards", AuthHandler(dashboardsHandler))
 	handleFunc("/packages", AuthHandler(packagesHandler))
 	handleFunc("/perf-result", AuthHandler(perfResultHandler))
 	handleFunc("/result", AuthHandler(resultHandler))
