@@ -13,9 +13,9 @@ handlers:
   static_dir: static
 - url: /(|gccgo/|hg/)log/.+
   script: _go_app
-- url: /(|gccgo/|hg/)(|building|clear-results|commit|packages|result|perf-result|tag|todo|perf|perfdetail|perfgraph|updatebenchmark)
+- url: /(|gccgo/|hg/)(|building|clear-results|commit|dashboards|packages|result|perf-result|tag|todo|perf|perfdetail|perfgraph|updatebenchmark)
   script: _go_app
-- url: /(|gccgo/|hg/)(init|buildtest|key|perflearn|dash-debug|config-file|upload|_ah/queue/go/delay)
+- url: /(|gccgo/|hg/)(init|buildtest|key|perflearn|config-file|upload|_ah/queue/go/delay)
   script: _go_app
   login: admin
 

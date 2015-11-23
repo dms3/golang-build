@@ -13,6 +13,11 @@ import (
 	"appengine"
 )
 
+// dashboardsHandler returns a list of the dashboards.
+func dashboardsHandler(r *http.Request) (interface{}, error) {
+	return dashboards, nil
+}
+
 func handleFunc(path string, h http.HandlerFunc) {
 	for _, d := range dashboards {
 		http.HandleFunc(d.Prefix+path, h)
