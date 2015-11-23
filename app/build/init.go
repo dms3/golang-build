@@ -98,6 +98,11 @@ func configFileUploadHandler(w http.ResponseWriter, r *http.Request) {
         readConfigFileFromBlob(w, r, c, file[0])
 }
 
+type DashboardConfig struct {
+	Response []Dashboard
+	Error    string
+}
+
 func readConfigFileFromBlob(w http.ResponseWriter, r *http.Request, c appengine.Context, info *blobstore.BlobInfo) {
 	blobReader := blobstore.NewReader(c, info.BlobKey)
 	b, err := ioutil.ReadAll(blobReader);
@@ -106,13 +111,15 @@ func readConfigFileFromBlob(w http.ResponseWriter, r *http.Request, c appengine.
                 http.Redirect(w, r, "/", http.StatusFound)
                 return
 	}
-	var dash Dashboard
-	if err := json.Unmarshal(b, &dash); err != nil {
+	var dashConf DashboardConfig
+	if err := json.Unmarshal(b, &dashConf); err != nil {
                 c.Errorf("error parsing json from uploaded file: %v", err)
                 http.Redirect(w, r, "/", http.StatusFound)
                 return
 	}
-	printDashboards(w, r, c, &dash)
+	for _, d := range dashConf.Response {
+		printDashboards(w, r, c, &d)
+	}
 }
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
