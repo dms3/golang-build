@@ -931,12 +931,12 @@ func GetTag(c appengine.Context, kind, name string) (*Tag, error) {
 }
 
 // Packages returns packages of the specified kind.
-// Kind must be one of "external" or "subrepo".
+// Kind must be one of "external", "subrepo" or "go".
 func Packages(c appengine.Context, kind string) ([]*Package, error) {
 	switch kind {
-	case "external", "subrepo":
+	case "external", "subrepo", "go":
 	default:
-		return nil, errors.New(`kind must be one of "external" or "subrepo"`)
+		return nil, errors.New(`kind must be one of "external", "subrepo" or "go"`)
 	}
 	var pkgs []*Package
 	q := datastore.NewQuery("Package").Filter("Kind=", kind)
@@ -948,9 +948,7 @@ func Packages(c appengine.Context, kind string) ([]*Package, error) {
 		} else if err != nil {
 			return nil, err
 		}
-		if pkg.Path != "" {
-			pkgs = append(pkgs, pkg)
-		}
+		pkgs = append(pkgs, pkg)
 	}
 	return pkgs, nil
 }
