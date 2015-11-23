@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"strings"
 	"html/template"
+        "encoding/json"
+        "io/ioutil"
 
 	"appengine"
 	"appengine/blobstore"
@@ -27,7 +29,7 @@ var dashTemplate = template.Must(
 // dashboardConfigHandler draws the dashboard config page.
 func dashboardConfigHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	uploadURL, err := blobstore.UploadURL(c, "/upload", nil)
+	uploadURL, err := blobstore.UploadURL(c, "/dashboard-upload", nil)
 	if err != nil {
 		logErr(w, r, err)
 		return
@@ -37,6 +39,45 @@ func dashboardConfigHandler(w http.ResponseWriter, r *http.Request) {
 		logErr(w, r, err)
 		return
 	}
+}
+
+func dashboardUploadHandler(w http.ResponseWriter, r *http.Request) {
+        c := appengine.NewContext(r)
+        blobs, _, err := blobstore.ParseUpload(r)
+        if err != nil {
+		logErr(w, r, err)
+                return
+        }
+        file := blobs["file"]
+        if len(file) == 0 {
+                c.Errorf("no file uploaded")
+                http.Redirect(w, r, "/dashboard-config", http.StatusFound)
+                return
+        }
+        readConfigFileFromBlob(w, r, c, file[0])
+}
+
+type DashboardConfig struct {
+	Response []*Dashboard
+	Error    string
+}
+
+func readConfigFileFromBlob(w http.ResponseWriter, r *http.Request, c appengine.Context, info *blobstore.BlobInfo) {
+	blobReader := blobstore.NewReader(c, info.BlobKey)
+	b, err := ioutil.ReadAll(blobReader);
+	if err != nil {
+                c.Errorf("error reading uploaded file: %v", err)
+                http.Redirect(w, r, "/dashboard-config", http.StatusFound)
+                return
+	}
+	var dashConf DashboardConfig
+	if err := json.Unmarshal(b, &dashConf); err != nil {
+                c.Errorf("error parsing json from uploaded file: %v", err)
+                http.Redirect(w, r, "/dashboard-config", http.StatusFound)
+                return
+	}
+	dashboards = dashConf.Response
+	http.Redirect(w, r, "/dashboards", http.StatusFound)
 }
 
 func handleFunc(path string, h http.HandlerFunc) {

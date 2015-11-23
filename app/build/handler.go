@@ -980,6 +980,7 @@ func init() {
 	handleFunc("/init", initHandler)
 	handleFunc("/key", keyHandler)
 	handleFunc("/dashboard-config", dashboardConfigHandler)
+	handleFunc("/dashboard-upload", dashboardUploadHandler)
 
 	// authenticated handlers
 	handleFunc("/building", AuthHandler(buildingHandler))
