@@ -979,11 +979,14 @@ func init() {
 	// admin handlers
 	handleFunc("/init", initHandler)
 	handleFunc("/key", keyHandler)
+	handleFunc("/dashboard-config", dashboardConfigHandler)
+	handleFunc("/dashboard-upload", dashboardUploadHandler)
 
 	// authenticated handlers
 	handleFunc("/building", AuthHandler(buildingHandler))
 	handleFunc("/clear-results", AuthHandler(clearResultsHandler))
 	handleFunc("/commit", AuthHandler(commitHandler))
+	handleFunc("/dashboards", AuthHandler(dashboardsHandler))
 	handleFunc("/packages", AuthHandler(packagesHandler))
 	handleFunc("/perf-result", AuthHandler(perfResultHandler))
 	handleFunc("/result", AuthHandler(resultHandler))
