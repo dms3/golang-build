@@ -983,6 +983,7 @@ func init() {
 	handleFunc("/key", keyHandler)
 	handleFunc("/config-file", configFileHandler)
 	handleFunc("/upload", configFileUploadHandler)
+	handleFunc("/dash-config", dashconfigHandler)
 
 	// debug handler
 
